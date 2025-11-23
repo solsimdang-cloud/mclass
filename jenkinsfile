@@ -13,7 +13,7 @@ pipeline{
         PORT = '8081' //컨테이너와 연결한 포트
 
         REMOTE_USER= "ec2-user" //원격(spring) 서버
-        REMOTE_USER= "3.34.5.111" //원격(spring) 서버 IP(public ip)
+        REMOTE_HOST= "3.34.5.111" //원격(spring) 서버 IP(public ip)
 
         REMOTE_DIR= "/home/ec2-user/deploy" //원격 서버에 파일 복사할 경로
 
