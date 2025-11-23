@@ -5,7 +5,7 @@ pipeline{
        maven 'maven 3.9.11' //jenkins에 등록된 maven 3.9.11을 사용
     }
 
-    enviroment{
+    environment {
         //배포에 필요한 변수 설정
         DOCKER_IMAGE = "domo-app"// 도커 이미지 이름
         CONTAINER_NAME= "springboot-container" // 도커 컨테이너 이름
