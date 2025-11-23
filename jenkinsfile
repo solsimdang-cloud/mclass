@@ -10,7 +10,7 @@ pipeline{
         DOCKER_IMAGE = "domo-app"// 도커 이미지 이름
         CONTAINER_NAME= "springboot-container" // 도커 컨테이너 이름
         JAR_FILE_NAME = "app.jar" //복사할 jar 파일
-        PORT ='8081' //컨테이너와 연결한 포트
+        PORT = '8081' //컨테이너와 연결한 포트
 
         REMOTE_USER= "ec2-user" //원격(spring) 서버
         REMOTE_USER= "3.34.5.111" //원격(spring) 서버 IP(public ip)
@@ -23,11 +23,28 @@ pipeline{
     //단계별로 실행될 코드 작성
     stages{
         stages('Git Checkout'){
-            steps{//실행될 실제 명령어 작성
+            steps {//실행될 실제 명령어 작성
                 //jenkins가 연결된 Git 저장소에서 최신 코드 체크아웃
                 //SCM(Source Code Management)
                 checkout scm
             }
         }
+
+        stage("Maven Build"){
+            steps {// es 여기 젠킨스에서 메이븐 실행하는 리눅스 명렁어(sh 쉘 명령어) 작성
+                //테스트는 건너뛰고 maven 빌드
+                sh 'mvn clean package -DskipTests'
+
+            }
+        }
+
+
+        stage('Prepare Jar'){
+            steps {
+                // 빌드 결과물 JAR 파일을 지정한 이름(app.jar)으로 복사
+                sh 'cp target/demo-0.0.1-SNAPSHOT.jar ${JAR_FILE_NAME}'
+            }
+        }
     }
+
 }
