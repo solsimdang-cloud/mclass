@@ -1,5 +1,5 @@
 pipeline{
-    agent any //어떤 실행 서버에서든 실행가능
+    agent any //어떤 실행 서버에서든 실행가능 함
 
     tools {
        maven 'maven 3.9.11' //jenkins에 등록된 maven 3.9.11을 사용
