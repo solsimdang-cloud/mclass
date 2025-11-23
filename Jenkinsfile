@@ -45,6 +45,34 @@ pipeline{
                 sh 'cp target/demo-0.0.1-SNAPSHOT.jar ${JAR_FILE_NAME}'
             }
         }
-    }
 
+        stage('Copy to Remote Server'){
+            //파일을 복사하여 옮김
+            steps {
+                //jenkins가 원격 서버에 ssh 접속할수있도록 sshagent사용
+                sshagent(credentials: [env.SSH_CREDENTIALS_ID]){
+                //원격 서버에 배포 디렉토리 생성(없으면 새로 만듦)
+                sh "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${REMOTE_USER}@${REMOTE_HOST} \"mkdir -p ${REMOTE_DIR}\""
+                // JAR 파일과 DOCKERFILE을 원격 서버에 복사(젠킨스서버에서 만들었던 jar파일과 도커를 스프링서버에 복사해 이동함)
+                sh "scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${JAR_FILE_NAME} Dockerfile ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/"
+                }
+            }
+        }
+        stage('Remote Docker Build & Deploy'){
+            steps {
+                sshagent(credentials: [env.SSH_CREDENTIALS_ID]){
+                    sh """
+ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${REMOTE_USER}@${REMOTE_HOST} << ENDSSH
+    cd ${REMOTE_DIR} || exit 1
+    docker rm -f ${CONTAINER_NAME} || true
+    docker build -t ${DOCKER_IMAGE} .
+    docker run -d --name ${CONTAINER_NAME} -p ${PORT}:${PORT} ${DOCKER_IMAGE}
+ENDSSH
+                    """
+                }
+            }
+            
+        }
+    }
+    
 }
