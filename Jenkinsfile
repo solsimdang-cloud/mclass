@@ -22,7 +22,7 @@ pipeline{
     }
     //단계별로 실행될 코드 작성
     stages{
-        stages('Git Checkout'){
+        stage('Git Checkout'){
             steps {//실행될 실제 명령어 작성
                 //jenkins가 연결된 Git 저장소에서 최신 코드 체크아웃
                 //SCM(Source Code Management)
